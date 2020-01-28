@@ -1,6 +1,8 @@
 package com.example.springbootapimysql.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -12,18 +14,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "students")
-public class Student extends Person{
+@Data
+@AllArgsConstructor
+//@NoArgsConstructor
+@ToString
+public class Student implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column
+
+    private String firstName;
+    private String lastName;
+
     private Float gpa;
     
     @ManyToMany(
@@ -31,28 +44,14 @@ public class Student extends Person{
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}, 
             mappedBy = "students"
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Set<Lecturer> lecturers = new HashSet<>();
-    
-    // CONSTRUCTORS
-
-    public Student() { }
 
     public Student(String firstName, String lastName, Float gpa) {
-        super(firstName, lastName);
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.gpa = gpa;
     }
-    
-    // GETTERS AND SETTERS
 
-    public Long getId() {return id;}
-    public void setId(Long id) {this.id = id;}
-
-    public Float getGpa() {return gpa;}
-    public void setGpa(Float gpa) {this.gpa = gpa;}
-
-    public Set<Lecturer> getLecturers() {return lecturers;}
-    public void setLecturers(Set<Lecturer> lecturers) {this.lecturers = lecturers;}
-    
+    public Student(){};
 }
